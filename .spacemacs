@@ -477,10 +477,12 @@ This function is called only while dumping Spacemacs configuration. You can
 dump."
   (require 'ycmd)
   (add-hook 'after-init-hook #'global-ycmd-mode)
+
   (setq inferior-lisp-program "/usr/bin/sbcl")
   (setq slime-contribs '(slime-fancy))
   (require 'slime)
-  )
+
+)
 
 (defun dotspacemacs/user-config ()
   "Configuration for user code:
@@ -488,7 +490,14 @@ This function is called at the very end of Spacemacs startup, after layer
 configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
-  )
+  (golden-ratio-mode t)
+
+  (put 'dired-find-alternate-file 'disabled nil)
+  (with-eval-after-load 'dired
+    (define-key dired-mode-map (kbd "RET") 'dired-find-alternate-file))
+
+  (setq dired-dwim-target t)
+)
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
@@ -511,4 +520,5 @@ This function is called at the very end of Spacemacs initialization."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
 )
