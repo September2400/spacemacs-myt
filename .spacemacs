@@ -468,6 +468,8 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
   ;;      '(("melpa-cn" . "http://elpa.emacs-china.org/melpa/")
   ;;        ("org-cn"   . "http://elpa.emacs-china.org/org/")
   ;;        ("gnu-cn"   . "http://elpa.emacs-china.org/gnu/")))
+  (add-hook 'c-mode-hook 'ycmd-mode)
+  (add-hook 'c++-mode-hook 'ycmd-mode)
   )
 
 (defun dotspacemacs/user-load ()
@@ -475,9 +477,7 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
 This function is called only while dumping Spacemacs configuration. You can
 `require' or `load' the libraries of your choice that will be included in the
 dump."
-  (require 'ycmd)
-  (add-hook 'after-init-hook #'global-ycmd-mode)
-
+  
   (setq inferior-lisp-program "/usr/bin/sbcl")
   (setq slime-contribs '(slime-fancy))
   (require 'slime)
@@ -492,11 +492,25 @@ Put your configuration code here, except for variables that should be set
 before packages are loaded."
   (golden-ratio-mode t)
 
+  (setq ycmd-server-command '("python" "/workspace/tools/emacs/ycmd/ycmd/"))
+  (setq ycmd-global-config "/workspace/tools/emacs/ycmd/ycm_global_conf.py ")
+  (setq ycmd-extra-conf-whitelist "/workspace/work_face++/*")
+  (setq ycmd-force-semantic-completion t)
+
   (put 'dired-find-alternate-file 'disabled nil)
   (with-eval-after-load 'dired
     (define-key dired-mode-map (kbd "RET") 'dired-find-alternate-file))
 
   (setq dired-dwim-target t)
+
+  (org-babel-do-load-languages
+   'org-babel-do-load-languages
+   '((python . t)
+     (js . t)
+     (emacs-lisp . t)
+     (slime . t)
+     (c . t)
+     (cpp . t)))
 )
 
 ;; Do not write anything past this comment. This is where Emacs will
