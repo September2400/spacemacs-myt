@@ -33,7 +33,7 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(
+   '(nginx
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press `SPC f e R' (Vim style) or
@@ -64,6 +64,7 @@ This function should only modify configuration layer settings."
      ycmd
      (c-c++ :variables
             c-c++-default-mode-for-headers 'c++-mode)
+     semantic
      (shell :variables
             shell-default-height 30
             shell-default-position 'bottom)
@@ -470,6 +471,7 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
   ;;        ("gnu-cn"   . "http://elpa.emacs-china.org/gnu/")))
   (add-hook 'c-mode-hook 'ycmd-mode)
   (add-hook 'c++-mode-hook 'ycmd-mode)
+  (add-hook 'python-mode-hook 'ycmd-mode)
   )
 
 (defun dotspacemacs/user-load ()
@@ -492,10 +494,19 @@ Put your configuration code here, except for variables that should be set
 before packages are loaded."
   (golden-ratio-mode t)
 
-  (setq ycmd-server-command '("python" "/workspace/tools/emacs/ycmd/ycmd/"))
-  (setq ycmd-global-config "/workspace/tools/emacs/ycmd/ycm_global_conf.py ")
-  (setq ycmd-extra-conf-whitelist "/workspace/work_face++/*")
-  (setq ycmd-force-semantic-completion t)
+  (setq ycmd-server-command '("/usr/bin/python2" "/usr/lib/ycmd/ycmd"))
+  ;;(setq ycmd-global-config "/workspace/tools/emacs/ycmd/ycm_global_conf.py")
+  (setq ycmd-global-config "/usr/lib/ycmd/ycm_extra_conf.py")  
+  ;;(setq ycmd-extra-conf-whitelist "/workspace/work_face++/*") 
+  ;;(setq ycmd-force-semantic-completion t)
+  (setq ycmd-startup-timeout 10)
+
+  (require 'company-ycmd)
+  (company-ycmd-setup)
+  (setq ycmd-packages
+        '((company-ycmd :toggle (configuration-layer/package-usedp 'company))
+          (flycheck-ycmd :toggle (configuration-layer/package-usedp 'flycheck))
+          ycmd))
 
   (put 'dired-find-alternate-file 'disabled nil)
   (with-eval-after-load 'dired
@@ -527,12 +538,11 @@ This function is called at the very end of Spacemacs initialization."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (ranger unfill mwim youdao-dictionary yasnippet-snippets yapfify xterm-color ws-butler writeroom-mode winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org symon string-inflection spaceline-all-the-icons smeargle slime-company shell-pop restart-emacs rainbow-delimiters pyvenv pytest pyenv-mode py-isort popwin pippel pipenv pip-requirements persp-mode pcre2el password-generator paradox overseer orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets org-brain open-junk-file neotree nameless multi-term move-text magit-svn magit-gitflow lorem-ipsum live-py-mode link-hint indent-guide importmagic hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-rtags helm-pydoc helm-purpose helm-projectile helm-org-rifle helm-mode-manager helm-make helm-gitignore helm-git-grep helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate google-c-style golden-ratio gnuplot gitignore-templates gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link fuzzy font-lock+ flyspell-correct-helm flycheck-ycmd flycheck-rtags flycheck-pos-tip flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-org evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-modeline disaster diminish define-word cython-mode counsel-projectile company-ycmd company-statistics company-rtags company-c-headers company-anaconda common-lisp-snippets column-enforce-mode clean-aindent-mode clang-format centered-cursor-mode auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile aggressive-indent ace-window ace-link ace-jump-helm-line ac-ispell))))
+    (nginx-mode youdao-dictionary yasnippet-snippets yapfify xterm-color ws-butler writeroom-mode winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package unfill toc-org symon string-inflection stickyfunc-enhance srefactor spaceline-all-the-icons smeargle slime-company shell-pop restart-emacs ranger rainbow-delimiters pyvenv pytest pyenv-mode py-isort popwin pippel pipenv pip-requirements persp-mode pcre2el password-generator paradox overseer orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets org-brain open-junk-file neotree nameless mwim multi-term move-text magit-svn magit-gitflow lorem-ipsum live-py-mode link-hint indent-guide importmagic hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-rtags helm-pydoc helm-purpose helm-projectile helm-org-rifle helm-mode-manager helm-make helm-gitignore helm-git-grep helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate google-c-style golden-ratio gnuplot gitignore-templates gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link fuzzy font-lock+ flyspell-correct-helm flycheck-ycmd flycheck-rtags flycheck-pos-tip flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-org evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-modeline disaster diminish define-word cython-mode counsel-projectile company-ycmd company-statistics company-rtags company-c-headers company-anaconda common-lisp-snippets column-enforce-mode clean-aindent-mode clang-format centered-cursor-mode auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile aggressive-indent ace-window ace-link ace-jump-helm-line ac-ispell))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
-
 )
