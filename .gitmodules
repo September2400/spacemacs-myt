@@ -1,0 +1,9 @@
+[submodule "slime"]
+	path = slime
+	url = https://github.com/slime/slime.git
+[submodule "vue"]
+	path = vue
+	url = https://github.com/thanhvg/vue.git
+[submodule "w3m"]
+	path = w3m
+	url = https://github.com/venmos/w3m-layer.gi
