@@ -31,7 +31,7 @@ values."
    dotspacemacs-configuration-layer-path '()
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(
+   '(javascript
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
@@ -50,6 +50,8 @@ values."
      git
      chrome
      markdown
+     ;;smex
+     ;;slime
      nginx
      org
      yaml
@@ -76,6 +78,10 @@ values."
      docker
      osx
      sql
+     w3m
+     node
+     lsp
+     (vue :variables vue-backend 'lsp)
      ;; version-control
      )
    ;; List of additional packages that will be installed without being
@@ -156,6 +162,7 @@ values."
    ;; with 2 themes variants, one dark and one light)
    dotspacemacs-themes '(spacemacs-dark
                          spacemacs-light)
+   dotspacemacs-mode-line-theme 'spacemacs
    ;; If non nil the cursor color matches the state color in GUI Emacs.
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
@@ -331,6 +338,43 @@ before packages are loaded. If you are unsure, you should try in setting them in
   )
 
 (defun dotspacemacs/user-config ()
+
+  ;; 设置w3m主页
+  (setq w3m-home-page "http://www.google.com")
+  ;; 默认显示图片
+  (setq w3m-default-display-inline-images t)
+  (setq w3m-default-toggle-inline-images t)
+  ;; 使用cookies
+  (setq w3m-use-cookies t)
+  ;;设定w3m运行的参数，分别为使用cookie和使用框架
+  (setq w3m-command-arguments '("-cookie" "-F"))
+  ;; 使用w3m作为默认浏览器
+  (setq browse-url-browser-function 'w3m-browse-url)
+  (setq w3m-view-this-url-new-session-in-background t)
+  ;;显示图标
+  (setq w3m-show-graphic-icons-in-header-line t)
+  (setq w3m-show-graphic-icons-in-mode-line t)
+  ;;C-c C-p 打开，这个好用
+  (setq w3m-view-this-url-new-session-in-background t)
+
+  (add-hook 'w3m-fontify-after-hook 'remove-w3m-output-garbages)
+  (defun remove-w3m-output-garbages ()
+    "去掉w3m输出的垃圾."
+    (interactive)
+    (let ((buffer-read-only))
+      (setf (point) (point-min))
+      (while (re-search-forward "[\200-\240]" nil t)
+        (replace-match " "))
+      (set-buffer-multibyte t))
+    (set-buffer-modified-p nil))
+
+  ;;(setq inferior-lisp-program "/usr/bin/sbcl")
+  (setq inferior-lisp-program "/usr/bin/clisp")
+  (add-to-list 'load-path "~/.emacs.d/private/slime/")
+  (require 'slime-autoloads)
+  (slime-setup)
+  
+
   "Configuration function for user code.
 This function is called at the very end of Spacemacs initialization after
 layers configuration.
@@ -355,3 +399,24 @@ you should place your code here."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+(defun dotspacemacs/emacs-custom-settings ()
+  "Emacs custom settings.
+This is an auto-generated function, do not modify its content directly, use
+Emacs customize menu instead.
+This function is called at the very end of Spacemacs initialization."
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (slime tern nodejs-repl livid-mode skewer-mode js2-refactor multiple-cursors js2-mode js-doc import-js grizzl helm-gtags ggtags dap-mode treemacs bui tree-mode lsp-mode ht pfuture counsel-gtags counsel swiper ivy add-node-modules-path disaster company-c-headers cmake-mode clang-format yaml-mode youdao-dictionary names chinese-word-at-point sql-indent reveal-in-osx-finder pbcopy osx-trash osx-dictionary nginx-mode launchctl gmail-message-mode ham-mode html-to-markdown flymd edit-server yapfify xterm-color web-mode tagedit smeargle slim-mode shell-pop scss-mode sass-mode pyvenv pytest pyenv-mode py-isort pug-mode pip-requirements orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download multi-term mmm-mode markdown-toc markdown-mode magit-gitflow live-py-mode hy-mode dash-functional htmlize helm-pydoc helm-gitignore helm-css-scss helm-company helm-c-yasnippet haml-mode gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md fuzzy flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flycheck evil-magit magit transient git-commit with-editor eshell-z eshell-prompt-extras esh-help emmet-mode dockerfile-mode docker json-mode tablist magit-popup docker-tramp json-snatcher json-reformat cython-mode company-web web-completion-data company-statistics company-anaconda company auto-yasnippet yasnippet auto-dictionary anaconda-mode pythonic ac-ispell auto-complete ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint indent-guide hydra lv hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation helm-themes helm-swoop helm-projectile projectile pkg-info epl helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist highlight evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu elisp-slime-nav dumb-jump f dash s diminish define-word column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core popup async))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+)
+
